@@ -4,29 +4,28 @@ Docker Pure-ftpd Server
 
 Pull down with docker:
 ```bash
-sudo docker pull stilliard/pure-ftpd
+sudo docker pull tomzo/pure-ftpd
 ```
 
 ----------------------------------------
 
-**My advice is to extend this image to make any changes.**  
-This is because rebuilding the entire docker image via a fork can be slow as it rebuilds the entire pure-ftpd package from source. 
+Original work in `stilliard/pure-ftpd`.
 
-Instead you can create a new project with a `DOCKERFILE` like so:
+This image has been modified to run on phusion baseimage, which has
+fixed logging.
 
-```
-FROM stilliard/pure-ftpd
+The `/ftp` directory is prepared to host anonymous user content.
 
-# e.g. you could change the defult command run:
-CMD /usr/sbin/pure-ftpd -c 30 -C 5 -l puredb:/etc/pure-ftpd/pureftpd.pdb -E -j -R 
-```
+Volume can be mounted with `--volume /host/path:/ftp`. Ownership of data
+on host does not really matter because it is fixed at container
+start using [this approach](https://github.com/tomzo/docker-uid-gid-fix)
 
 ----------------------------------------
 
-Starting it 
+Starting it
 ------------------------------
 
-`docker run -d -p 21:21 --name ftpd_server stilliard/pure-ftpd `
+`docker run -d -p 21:21 --name ftpd_server --volume /host/path:/ftp tomzo/pure-ftpd `
 
 Operating it
 ------------------------------
@@ -70,23 +69,10 @@ Default pure-ftpd options explained
 
 For more information please see `man pure-ftpd`, or visit: https://www.pureftpd.org/
 
-----------------------------------------
-
-
-Development (via git clone)
-```bash
-# Clone the repo
-git clone https://github.com/stilliard/docker-pure-ftpd.git
-cd docker-pure-ftpd
-# Build the image
-make build
-# Run container in background:
-make run
-# enter a bash shell insdie the container:
-make enter
-```
 
 Credits
 -------------
 Thanks for the help on stackoverflow with this!
 https://stackoverflow.com/questions/23930167/installing-pure-ftpd-in-docker-debian-wheezy-error-421
+
+And thanks stilliard for figuring out the compilation.
